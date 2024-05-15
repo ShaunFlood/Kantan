@@ -1,31 +1,40 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
+dotenv.config({ path: 'config.env' });
 
+const ATLAS_URI = process.env.ATLAS_URI || "";
+const PORT = process.env.PORT || 1111;
 const app = express();
 
-//middlesware
+// Middleware
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-//connecting to the db
+// Routes for the backend
 
-//check for valid token
+// Database connection
+
+mongoose.connect(ATLAS_URI);
+
+const db = mongoose.connection;
+db.on('error', (error) => {
+    console.error('DB connection error:', error);
+});
+db.once('open', () => {
+    console.log('Connected to database');
+});
 
 
-//routes for the backend
-
-//error handling
-
+//Error handling
 
 //Server start
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-})
+});
 
-module.exports = server;
+export default server;
